@@ -1,0 +1,63 @@
+-- assigns a row number for each year 
+SELECT
+  Year,
+
+  -- Assign numbers to each year
+  Row_number() over() AS Row_N
+FROM (
+  SELECT DISTINCT year
+  FROM Summer_Medals
+  ORDER BY Year ASC
+) AS Years
+ORDER BY Year ASC;
+
+
+-- assigns the numbers ro more recent years 
+SELECT
+  Year,
+  ROW_NUMBER() OVER (order by year desc) AS Row_N
+FROM (
+  SELECT DISTINCT Year
+  FROM Summer_Medals
+) AS Years
+ORDER BY Year;
+
+
+-- counts amount of medals an athelete has won
+WITH Athlete_Medals AS (
+  SELECT
+    -- Count the number of medals each athlete has earned
+    Athlete,
+    COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Athlete)
+
+-- ranks the athlete with the most medals
+SELECT
+  -- Number each athlete by how many medals they've earned
+  Athlete,
+  Row_Number() OVER(ORDER BY Medals DESC) AS Row_N
+FROM Athlete_Medals
+ORDER BY Medals DESC;
+
+
+-- shows each years champion and previous champ 
+WITH Weightlifting_Gold AS (
+  SELECT
+    -- Return each year's champions' countries
+    Year,
+    Country AS champion
+  FROM Summer_Medals
+  WHERE
+    Discipline = 'Weightlifting' AND
+    Event = '69KG' AND
+    Gender = 'Men' AND
+    Medal = 'Gold')
+
+SELECT
+  Year, Champion,
+  -- Fetch the previous year's champion
+  Lag(Champion) OVER
+    (ORDER BY year ASC) AS Last_Champion
+FROM Weightlifting_Gold
+ORDER BY Year ASC;
