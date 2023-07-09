@@ -1,0 +1,49 @@
+-- splits up query into 111 groups
+WITH Events AS (
+  SELECT DISTINCT Event
+  FROM Summer_Medals)
+  
+SELECT
+  --- Split up the distinct events into 111 unique groups
+  event,
+  ntile(111) OVER (ORDER BY event ASC) AS Page
+FROM Events
+ORDER BY Event ASC;
+
+-- splits which athletes won the most medals into thirds 
+WITH Athlete_Medals AS (
+  SELECT Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Athlete
+  HAVING COUNT(*) > 1)
+  
+SELECT
+  Athlete,
+  Medals,
+  -- Split athletes into thirds by their earned medals
+  NTILE(3) over (order by medals desc) AS Third
+FROM Athlete_Medals
+ORDER BY Medals DESC, Athlete ASC;
+
+*/ splits up data into thirds and shows the average of what each country leader had this can 
+be used for showing quartiles and splitting up data and getting a beter understanding of a whole dataset/*
+WITH Athlete_Medals AS (
+  SELECT Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Athlete
+  HAVING COUNT(*) > 1),
+  
+  Thirds AS (
+  SELECT
+    Athlete,
+    Medals,
+    NTILE(3) OVER (ORDER BY Medals DESC) AS Third
+  FROM Athlete_Medals)
+  
+SELECT
+  -- Get the average medals earned in each third
+  third,
+  avg(medals) AS Avg_Medals
+FROM Thirds
+GROUP BY Third
+ORDER BY Third ASC;
