@@ -1,0 +1,28 @@
+-- using the sakila database
+
+--shows only movies that have trailers in special features
+-- Select the title and special features column 
+SELECT 
+  title, 
+  special_features 
+FROM film
+-- Use the array index of the special_features column
+WHERE special_features[1] = 'Trailers';
+
+-- shows only movies with deleted scenes in the special features
+-- Select the title and special features column 
+SELECT 
+  title, 
+  special_features 
+FROM film
+-- Use the array index of the special_features column
+WHERE special_features[2] = 'Deleted Scenes';
+
+
+-- looks throughtout the whole special features field to look for deleted scenes
+SELECT
+  title, 
+  special_features 
+FROM film 
+-- Modify the query to use the ANY function 
+WHERE 'Trailers' = ANY (special_features);
