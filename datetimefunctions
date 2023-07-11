@@ -1,0 +1,36 @@
+-- using the sakila database
+-- extracts the day from rental date 
+SELECT 
+  -- Extract day of week from rental_date
+  Extract(dow from rental_date) AS dayofweek 
+FROM rental 
+LIMIT 100;
+
+--shows the amount of rentals for each day of the week in total
+  -- Extract day of week from rental_date
+SELECT 
+  EXTRACT(dow FROM rental_date) AS dayofweek, 
+  -- Count the number of rentals
+  count(rental_date) as rentals 
+FROM rental 
+GROUP BY 1;
+
+  -- truncates the rental date by year
+SELECT date_trunc('year', rental_date) AS rental_year
+FROM rental;
+
+ -- truncates the rental date by month
+SELECT date_trunc('month', rental_date) AS rental_year
+FROM rental;
+
+-- truncates the rental date by day
+SELECT date_trunc('day', rental_date) AS rental_year
+FROM rental;
+
+-- counts the number of rentals by day
+SELECT 
+  DATE_TRUNC('day', rental_date) AS rental_day,
+  -- Count total number of rentals 
+  count(rental_date) AS rentals 
+FROM rental
+GROUP BY 1;
