@@ -1,0 +1,15 @@
+-- Select the current timestamp
+SELECT NOW()
+
+-- Select the current date
+SELECT current_date;
+
+--Select the current timestamp without a timezone
+SELECT cast( NOW() AS timestamp)
+
+--showing two different ways to get the same result with current date
+SELECT 
+	-- Select the current date
+	current_date,
+    -- CAST the result of the NOW() function to a date
+    cast( now() AS date )
