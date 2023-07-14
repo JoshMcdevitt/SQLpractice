@@ -1,0 +1,88 @@
+--counts the number of rows
+SELECT count(*)
+  FROM fortune500;
+
+-- sees what values are missing in the ticker column
+SELECT count(*) - count(ticker) AS missing
+  FROM fortune500;
+
+-- sees whats missing in the profits_change column 
+SELECT count(*) - count(profits_change) AS missing
+  FROM fortune500;
+
+-- same thing for industy table 
+  SELECT count(*) - count(industry) AS missing
+  FROM fortune500;
+
+
+-- retunring the most common tags that have the most cloud type
+  -- Select the 3 columns desired
+SELECT company.name, tag_type.type, tag_company.tag
+  FROM company
+  	   -- Join to the tag_company table
+       INNER JOIN tag_company 
+       ON company.id = tag_company.company_id
+       -- Join to the tag_type table
+       INNER JOIN tag_type
+       ON tag_company.tag = tag_type.tag
+  -- Filter to most common type
+  WHERE type='cloud';
+
+  -- using coalesce to see which industry has the most null values 
+  -- Use coalesce
+SELECT coalesce(industry, sector, 'Unknown') AS industry2,
+       -- Don't forget to count!
+       count(*) 
+  FROM fortune500 
+-- Group by what? (What are you counting by?)
+ GROUP BY industry2
+-- Order results to see most common first
+ order by count desc
+-- Limit results to get just the one value you want
+limit 1;
+
+-- seeing what companies are in borth company table and fortune500 table and seeing all thec companies where tickers is not null
+SELECT company_original.name, title, rank
+  -- Start with original company information
+  FROM company AS company_original
+       -- Join to another copy of company with parent
+       -- company information
+	   LEFT JOIN company AS company_parent
+       ON company_original.parent_id = company_parent.id 
+       -- Join to fortune500, only keep rows that match
+       Inner JOIN fortune500 
+       -- Use parent ticker if there is one, 
+       -- otherwise original ticker
+       ON coalesce(company_original.ticker, 
+                   company_parent.ticker) = 
+             fortune500.ticker
+ -- For clarity, order by rank
+ ORDER BY rank; 
+
+-- changing prfits_change to an integer with cast
+-- Select the original value
+SELECT profits_change, 
+	   -- Cast profits_change
+       CAST(profits_change as integer) AS profits_change_int
+  FROM fortune500;
+
+  --changing changing the data type with ::
+  -- Divide 10 by 3
+SELECT 10/3, 
+       -- Cast 10 as numeric and divide by 3
+       10::numeric/3;
+
+ -- more practice with ::
+ SELECT '3.2'::numeric,
+       '-123'::numeric,
+       '1e3'::numeric,
+       '1e-3'::numeric,
+       '02314'::numeric,
+       '0002'::numeric;
+
+-- counts how many revenue changes were up from 2016
+-- Count rows 
+SELECT count(*)
+  FROM fortune500
+ -- Where...
+ WHERE revenues_change > 0;
