@@ -1,0 +1,37 @@
+-- removes numbers and special characters from street
+SELECT distinct street,
+       -- Trim off unwanted characters from street
+       trim(street, '0123456789 #,./') AS cleaned_street
+  FROM evanston311
+ ORDER BY street;
+
+-- searches for trash or garbage in description regardless of capitilization 
+-- Count rows
+SELECT count(*)
+  FROM evanston311
+ -- Where description includes trash or garbage
+ WHERE description ILIKE '%trash%'
+    or description ILIKE '%garbage%';
+
+-- returns categories that have trash or garbage in them
+-- Select categories containing Trash or Garbage
+SELECT category
+  FROM evanston311
+ -- Use LIKE
+ WHERE category LIKE '%Trash%' 
+    or category LIKE '%Garbage%';
+
+
+-- finding the most common categories for rows with a description about trash that dont have a trash related category
+-- Count rows with each category
+SELECT category, count(*)
+  FROM evanston311 
+ WHERE (description ILIKE '%trash%'
+    OR description ILIKE '%garbage%') 
+   AND category NOT LIKE '%Trash%'
+   AND category NOT LIKE '%Garbage%'
+ -- What are you counting?
+ GROUP BY category
+ --- order by most frequent values
+ ORDER BY count(*) desc
+ LIMIT 10;
